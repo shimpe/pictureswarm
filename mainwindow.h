@@ -53,6 +53,7 @@ private:
     QElapsedTimer m_overalltimer;
 
     int m_frame;
+    int m_saveIdx;
 
     tp_step m_movie;
 };
