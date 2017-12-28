@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_frame(0),
-    m_saveIdx(0)
+    m_saveIdx(0),
     m_movie(dandelion)
 {
     ui->setupUi(this);
