@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Binary folders
+inputs/*
+movies/*
+render/*
+
