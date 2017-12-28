@@ -37,7 +37,8 @@ public:
     void renderDandelion(const PerlinNoise &p, int startFrame);
     void renderPlanets(const PerlinNoise &p, int startFrame);
     void renderParticles(const PerlinNoise &p, int startFrame);
-    void renderMovie(const PerlinNoise &p, int startFrame);
+    void renderJokerMovie(const PerlinNoise &p, int startFrame);
+    void renderAfricanMovie(const PerlinNoise &p, int startFrame);
 
 private slots:
     void myUpdate();

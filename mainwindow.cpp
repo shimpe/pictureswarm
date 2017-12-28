@@ -266,7 +266,7 @@ void MainWindow::renderParticles(const PerlinNoise &/*noise*/, int startFrame)
     saveCurrentFrame();
 }
 
-void MainWindow::renderMovie(const PerlinNoise &/*noise*/, int startFrame)
+void MainWindow::renderJokerMovie(const PerlinNoise &/*noise*/, int startFrame)
 {
     int frame = (m_frame - startFrame);
     if (frame < 0)
@@ -304,6 +304,42 @@ void MainWindow::renderMovie(const PerlinNoise &/*noise*/, int startFrame)
     }
 }
 
+void MainWindow::renderAfricanMovie(const PerlinNoise &/*p*/, int startFrame)
+{
+    int frame = (m_frame - startFrame);
+    if (frame < 0)
+        return;
+
+    int maxIterations = 300;
+
+    if (frame % maxIterations == 0)
+    {
+        int imageindex = int(frame / maxIterations);
+        loadImageParticles(GLOBALpath + QString("inputs/africanmovie/african_%1.jpg").arg(imageindex+1, 5, 10, QChar('0')), 3000, Particle::open_hexagon);
+    }
+
+    if (frame % maxIterations <= (maxIterations - 1))
+    {
+        QList<Particle*> newParticles;
+        for (auto &p : m_particles)
+        {
+            Particle *newParticle = static_cast<Particle*>(p)->physicsUpdate(m_inputImage);
+            newParticles.append(newParticle);
+        }
+
+        m_particles.clear();
+        for (auto & np : newParticles)
+        {
+            m_particles.append(np);
+            m_scene->addItem(np);
+        }
+    }
+    if (frame % maxIterations == (maxIterations-1))
+    {
+        saveCurrentFrame();
+    }
+}
+
 float MainWindow::saveCurrentFrame()
 {
     QPixmap pixmap(1920,1080);
@@ -329,16 +365,20 @@ void MainWindow::myUpdate()
     //renderDandelion(p, 0); // 840 frames
     //renderPlanets(p, 0);
     //renderParticles(p, 0);
-    renderMovie(p, 0);
+    //renderJokerMovie(p, 0);
+    renderAfricanMovie(p, 0);
 
-    if (m_frame >= 500*84)
+    if (m_frame >= 500*315)
     {
         m_timer.stop();
         qDebug(QString("Rendered %1 frames in %2 minutes.").arg(m_frame).arg(m_overalltimer.elapsed()/1000/60).toStdString().c_str());
         QApplication::quit();
     }
 
-    //float elapsed = m_elapsedtime.elapsed();
-    //qDebug(QString("Finished processing frame %1 [took %2 ms, framerate: %3 fps]").arg(m_frame).arg(elapsed).arg(1000.0/elapsed).toStdString().c_str());
+    if (m_frame % 100 == 0)
+    {
+        float elapsed = m_elapsedtime.elapsed();
+        qDebug(QString("Finished processing frame %1 [took %2 ms, framerate: %3 fps]").arg(m_frame).arg(elapsed).arg(1000.0/elapsed).toStdString().c_str());
+    }
     m_frame++;
 }

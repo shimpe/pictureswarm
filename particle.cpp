@@ -57,6 +57,28 @@ void Particle::paint(QPainter *painter, const QStyleOptionGraphicsItem */*option
         QPolygonF polygon(points);
         painter->drawConvexPolygon(polygon);
     }
+    else if (m_renderMode == open_square)
+    {
+        painter->setPen(m_pen);
+        painter->setBrush(QBrush(Qt::NoBrush));
+        painter->drawRect(QRectF(m_prevpos.toPointF(), m_pos.toPointF()));
+    }
+    else if (m_renderMode == open_hexagon)
+    {
+        painter->setBrush(QBrush(Qt::NoBrush));
+        QVector<QPointF> points;
+        float radius = (m_prevpos-m_pos).length();
+        QVector2D midpoint = (m_prevpos+m_pos)/2.0;
+        for (int i = 0; i < 6; i++)
+        {
+            float x = radius*cos(qDegreesToRadians(i*360.0/6.0));
+            float y = radius*sin(qDegreesToRadians(i*360.0/6.0));
+            QVector2D corner = midpoint + QVector2D(x,y);
+            points.append(corner.toPointF());
+        }
+        QPolygonF polygon(points);
+        painter->drawConvexPolygon(polygon);
+    }
     painter->resetTransform();
 }
 
@@ -68,7 +90,7 @@ Particle *Particle::physicsUpdate(const QImage &inputImage)
     m_color = inputImage.pixelColor(m_pos.toPoint());
     if (m_renderMode == line)
         m_color.setAlpha(int(255/4));
-    else if (m_renderMode == square || m_renderMode == hexagon)
+    else if (m_renderMode == square || m_renderMode == hexagon || m_renderMode == open_square || m_renderMode == open_hexagon)
         m_color.setAlpha(int(255/10));
     m_pen = QPen(m_color, m_radius);
     m_brush = QBrush(m_color, Qt::SolidPattern);

@@ -12,7 +12,7 @@ class QGraphicsScene;
 class Particle : public QGraphicsItem
 {
 public:
-    enum tp_render_mode { line = 0, square = 1, hexagon = 2};
+    enum tp_render_mode { line = 0, square = 1, hexagon = 2, open_square = 3, open_hexagon = 4};
 
     Particle();
     Particle(const Particle &other);
