@@ -14,6 +14,8 @@
 #include <QMatrix4x4>
 #include "particle.h"
 
+QString GLOBALpath = "/home/shimpe/development/pswarm/pictureswarm/";
+
 void MainWindow::loadImageVehicles(const QString &filename, tp_load_mode loadMode, int threshold)
 {
     m_scene->clear();
@@ -121,7 +123,7 @@ void MainWindow::renderDandelion(const PerlinNoise &p, int startFrame)
 
     if (frame == 0)
     {
-        loadImageVehicles("/home/shimpe/development/pictureswarm/inputs/dandelion.jpg", from_center, 20);
+        loadImageVehicles(GLOBALpath + QString("inputs/dandelion.jpg"), from_center, 20);
     }
 
     if (frame >= 200 && frame < 280)
@@ -199,7 +201,7 @@ void MainWindow::renderPlanets(const PerlinNoise &/*p*/, int startFrame)
 
     if (frame == 0)
     {
-        loadImageVehicles("/home/shimpe/development/pictureswarm/inputs/planets.jpg", left_side, 20);
+        loadImageVehicles(GLOBALpath + QString("inputs/planets.jpg"), left_side, 20);
     }
 
     if (frame >= 100 && frame < 400)
@@ -241,7 +243,7 @@ void MainWindow::renderParticles(const PerlinNoise &/*noise*/, int startFrame)
 
     if (frame == 0)
     {
-        loadImageParticles("/home/shimpe/development/pictureswarm/inputs/musician.jpg", 3000, Particle::hexagon);
+        loadImageParticles(GLOBALpath + QString("inputs/musician.jpg"), 3000, Particle::hexagon);
     }
 
     if (frame < 500)
@@ -270,13 +272,15 @@ void MainWindow::renderMovie(const PerlinNoise &/*noise*/, int startFrame)
     if (frame < 0)
         return;
 
-    if (frame % 500 == 0)
+    int maxIterations = 500;
+
+    if (frame % maxIterations == 0)
     {
-        int imageindex = int(frame / 500);
-        loadImageParticles(QString("/home/shimpe/development/pictureswarm/inputs/jokermovie/joker_%1.jpg").arg(imageindex+1, 5, 10, QChar('0')), 3000, Particle::line);
+        int imageindex = int(frame / maxIterations);
+        loadImageParticles(GLOBALpath + QString("inputs/jokermovie/joker_%1.jpg").arg(imageindex+1, 5, 10, QChar('0')), 3000, Particle::hexagon);
     }
 
-    if (frame % 500 <= 499)
+    if (frame % maxIterations <= (maxIterations - 1))
     {
         QList<Particle*> newParticles;
         for (auto &p : m_particles)
@@ -291,10 +295,10 @@ void MainWindow::renderMovie(const PerlinNoise &/*noise*/, int startFrame)
             m_particles.append(np);
             m_scene->addItem(np);
         }
-        if (frame < 500)
+        if (frame < maxIterations)
             saveCurrentFrame(); // first 500 frames: build up first movie frame; next saved frames are only the completely finished movie-frames
     }
-    if (frame > 0 && frame % 500 == 0)
+    if (frame % maxIterations == (maxIterations-1))
     {
         saveCurrentFrame();
     }
@@ -306,7 +310,7 @@ float MainWindow::saveCurrentFrame()
     pixmap.fill(Qt::black);
     QPainter painter(&pixmap);
     m_scene->render(&painter, pixmap.rect(), pixmap.rect());
-    pixmap.save(QString("/home/shimpe/development/pictureswarm/render/test_%1.png").arg(m_saveIdx, 6, 10, QChar('0')));
+    pixmap.save(GLOBALpath + QString("render/test_%1.png").arg(m_saveIdx, 6, 10, QChar('0')));
     m_saveIdx++;
     float elapsed = m_elapsedtime.elapsed();
     if (!elapsed)
