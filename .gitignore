@@ -36,3 +36,7 @@ inputs/*
 movies/*
 render/*
 
+# Other
+*.autosave
+*.pro.user
+
