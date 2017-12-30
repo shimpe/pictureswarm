@@ -232,7 +232,7 @@ QVector2D Vehicle::seek(const QVector2D &target, float max_distance)
     {
         desired = vhelper::setMag(desired, m_maxspeed);
         QVector2D steer = desired - *m_velocity;
-        steer = vhelper::limit(steer, m_maxforce);
+        steer = vhelper::limitmax(steer, m_maxforce);
         return steer;
     }
     return QVector2D(0,0);
@@ -247,7 +247,7 @@ QVector2D Vehicle::flee(const QVector2D &target, float max_distance)
         desired = vhelper::setMag(desired, m_maxspeed);
         desired *= -1;
         QVector2D steer = desired - *m_velocity;
-        steer = vhelper::limit(steer, m_maxforce);
+        steer = vhelper::limitmax(steer, m_maxforce);
         return steer;
     }
     return QVector2D(0,0);
@@ -264,6 +264,6 @@ QVector2D Vehicle::arrive(const QVector2D &target, float max_distance)
     }
     desired = vhelper::setMag(desired, speed);
     QVector2D steer = desired - *m_velocity;
-    steer = vhelper::limit(steer, m_maxforce);
+    steer = vhelper::limitmax(steer, m_maxforce);
     return steer;
 }

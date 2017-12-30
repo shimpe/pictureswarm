@@ -340,6 +340,96 @@ void MainWindow::renderAfricanMovie(const PerlinNoise &/*p*/, int startFrame)
     }
 }
 
+void MainWindow::renderPaintstrokeMovie(PerlinNoise &/*p*/, int startFrame)
+{
+
+    int frame = (m_frame - startFrame);
+    if (frame < 0)
+        return;
+
+    int maxIterations = 600;
+
+    if (frame % maxIterations == 0)
+    {
+        int imageindex = int(frame / maxIterations);
+        loadImageParticles(GLOBALpath + QString("inputs/pearlmovie/pearl_%1.jpg").arg(imageindex+1, 5, 10, QChar('0')), 300, Particle::paint_stroke);
+    }
+
+    if (frame % maxIterations <= (maxIterations - 1))
+    {
+        QList<Particle*> newParticles;
+        for (auto &p : m_particles)
+        {
+            Particle *newParticle = static_cast<Particle*>(p)->physicsUpdate(m_inputImage);
+            float fractionStrokes = 1/7.0;
+            if (frame % maxIterations < maxIterations*fractionStrokes) // first fractionStrokes: paint strokes
+            {
+                float thickness = mhelper::linexp((frame % maxIterations) + 1, 1, fractionStrokes*maxIterations, 100, 3);
+                int variation = int(thickness/4) > 0 ? int(thickness/4) : 1;
+                int thick = int(thickness + ((qrand() % (variation*2)) - variation));
+                if (thick < 1)
+                    thick = 1;
+                newParticle->setPaintStrokeThickness(thick);
+                newParticle->setShowMainStroke(true);
+                newParticle->setStrokeDetailsLighter(qrand() % 2);
+                newParticle->setDetailColorChange(100 + (qrand() % 100));
+                QSet<int> drawDetails;
+                //if (qrand() % 3 < 2) // only 2/3 strokes have additional details
+                {
+                    for (int i = 0; i < thick; i++)
+                    {
+                        if (qrand() % 3 < 1) // only 1/3 of possible details are actually drawn
+                            drawDetails.insert(i);
+                    }
+                }
+                newParticle->setDrawDetail(drawDetails);
+                newParticle->setMovement(mhelper::linexp((frame % maxIterations) + 1, 1, fractionStrokes*maxIterations, 100, 3));
+                newParticle->setMinAlpha(0);
+            }
+            else // last fraction: plain dots
+            {
+                float thickness = mhelper::linexp((frame % maxIterations) + 1, fractionStrokes*maxIterations, maxIterations, 20, 3);
+                int variation = int(thickness/4) > 0 ? int(thickness/4) : 1;
+                int thick = int(thickness + ((qrand() % (variation*2)) - variation));
+                if (thick < 1)
+                    thick = 1;
+                newParticle->setPaintStrokeThickness(thick);
+                QSet<int> drawDetails;
+                if (qrand() % 3 < 2) // only 2/3 strokes have additional details
+                {
+                    for (int i = 0; i < thick; i++)
+                    {
+                        if (qrand() % 3 < 1) // only 1/3 of possible details are actually drawn
+                            drawDetails.insert(i);
+                    }
+                }
+                newParticle->setDrawDetail(drawDetails);
+                newParticle->setDetailColorChange(100 + (qrand() % 20));
+                newParticle->setShowMainStroke(true);
+                newParticle->setMovement(thick);
+                newParticle->setMinAlpha(200);
+            }
+            newParticles.append(newParticle);
+        }
+
+        m_particles.clear();
+        for (auto & np : newParticles)
+        {
+            m_particles.append(np);
+            m_scene->addItem(np);
+        }
+
+        if (frame < maxIterations)
+        {
+            saveCurrentFrame();
+        }
+    }
+    if (frame % maxIterations == (maxIterations-1))
+    {
+        saveCurrentFrame();
+    }
+}
+
 float MainWindow::saveCurrentFrame()
 {
     QPixmap pixmap(1920,1080);
@@ -359,16 +449,17 @@ float MainWindow::saveCurrentFrame()
 
 void MainWindow::myUpdate()
 {
-    PerlinNoise p;    
+    PerlinNoise p;
     m_elapsedtime.start();
 
     //renderDandelion(p, 0); // 840 frames
     //renderPlanets(p, 0);
     //renderParticles(p, 0);
     //renderJokerMovie(p, 0);
-    renderAfricanMovie(p, 0);
+    //renderAfricanMovie(p, 0);
+    renderPaintstrokeMovie(p, 0);
 
-    if (m_frame >= 500*315)
+    if (m_frame >= 600*533)
     {
         m_timer.stop();
         qDebug(QString("Rendered %1 frames in %2 minutes.").arg(m_frame).arg(m_overalltimer.elapsed()/1000/60).toStdString().c_str());

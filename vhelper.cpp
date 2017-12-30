@@ -10,7 +10,17 @@ QVector2D vhelper::setMag(const QVector2D &v, float magnitude)
     return result*magnitude;
 }
 
-QVector2D vhelper::limit(const QVector2D &v, float magnitude)
+QVector2D vhelper::limitmin(const QVector2D &v, float magnitude)
+{
+    float vmag = v.lengthSquared();
+    if (vmag < magnitude*magnitude)
+    {
+        return vhelper::setMag(v, magnitude);
+    }
+    return v;
+}
+
+QVector2D vhelper::limitmax(const QVector2D &v, float magnitude)
 {
     float vmag = v.lengthSquared();
     if (vmag > magnitude*magnitude)

@@ -39,6 +39,7 @@ public:
     void renderParticles(const PerlinNoise &p, int startFrame);
     void renderJokerMovie(const PerlinNoise &p, int startFrame);
     void renderAfricanMovie(const PerlinNoise &p, int startFrame);
+    void renderPaintstrokeMovie(PerlinNoise &/*p*/, int startFrame);
 
 private slots:
     void myUpdate();
