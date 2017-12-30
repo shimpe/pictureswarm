@@ -40,7 +40,22 @@ HEADERS += \
     mhelper.h \
     chelper.h \
     perlinnoise.h \
-    particle.h
+    particle.h \
+    spline_library/splines/cubic_hermite_spline.h \
+    spline_library/splines/generic_b_spline.h \
+    spline_library/splines/natural_spline.h \
+    spline_library/splines/quintic_hermite_spline.h \
+    spline_library/splines/uniform_cr_spline.h \
+    spline_library/splines/uniform_cubic_bspline.h \
+    spline_library/utils/arclength.h \
+    spline_library/utils/calculus.h \
+    spline_library/utils/linearalgebra.h \
+    spline_library/utils/nanoflann.hpp \
+    spline_library/utils/spline_common.h \
+    spline_library/utils/splineinverter.h \
+    spline_library/utils/splinesample_adaptor.h \
+    spline_library/spline.h \
+    spline_library/vector.h
 
 FORMS += \
         mainwindow.ui
